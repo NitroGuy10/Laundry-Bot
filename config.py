@@ -3,7 +3,8 @@ import os
 
 CONFIG_PATH = "config.json"
 config = {
-    "discord_bot_token": ""
+    "discord_bot_token": "",
+    "port": "52800"
 }
 
 def save_config() -> None:

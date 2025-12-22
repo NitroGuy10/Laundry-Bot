@@ -1,7 +1,6 @@
 import discord
 import config
-
-import socket
+import util
 
 client = None
 
@@ -21,7 +20,7 @@ class MyClient(discord.Client):
                 "```"
                 "Available commands:\n"
                 "!ping - Responds with 'Pong!'\n"
-                "!getip - Responds with the server's IP address\n"
+                "!ip - Responds with the server's IP addresses (ifconfig output)\n"
                 "!site - Provides the URL to access the web server\n"
                 "!shutdown - Shuts down the bot"
                 "```"
@@ -32,13 +31,13 @@ class MyClient(discord.Client):
         if message.content == '!ping':
             await message.channel.send('Pong!')
         
-        if message.content == '!getip':
-            ip_address = socket.gethostbyname(socket.gethostname())
-            await message.channel.send(f'IP Address: {ip_address}')
+        if message.content == '!ip':
+            chunks = util.split_for_discord(f"Hostname: {util.get_hostname()}\n\n{util.get_ifconfig_output()}", True)
+            for chunk in chunks:
+                await message.channel.send(chunk)
         
         if message.content == "!site":
-            ip_address = socket.gethostbyname(socket.gethostname())
-            await message.channel.send(f"http://{ip_address}:52800")
+            await message.channel.send(f"http://{util.get_hostname()}:{config.get('port')}/")
         
         elif message.content == '!shutdown':
             await message.channel.send('Shutting down...')

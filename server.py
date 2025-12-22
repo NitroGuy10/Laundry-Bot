@@ -1,6 +1,8 @@
 from flask import Flask
 from waitress import serve
 
+import config
+
 app = Flask(__name__, static_folder='static', static_url_path='')
 
 
@@ -16,5 +18,5 @@ def status():
 
 def start_server():
     print("Starting web server...")
-    serve(app, host="0.0.0.0", port=52800)
+    serve(app, host="0.0.0.0", port=int(config.get("port")))
 
