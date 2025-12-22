@@ -5,6 +5,7 @@ import server
 import asyncio
 import multiprocessing
 
+
 async def main():
     if not config.load_config():
         exit(1)

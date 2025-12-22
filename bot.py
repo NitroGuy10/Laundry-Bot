@@ -1,6 +1,8 @@
 import discord
 import config
 
+import socket
+
 client = None
 
 class MyClient(discord.Client):
@@ -13,9 +15,30 @@ class MyClient(discord.Client):
         # Ignore messages from the bot itself
         if message.author == self.user:
             return
+
+        if message.content == '!help':
+            help_text = (
+                "```"
+                "Available commands:\n"
+                "!ping - Responds with 'Pong!'\n"
+                "!getip - Responds with the server's IP address\n"
+                "!site - Provides the URL to access the web server\n"
+                "!shutdown - Shuts down the bot"
+                "```"
+            )
+            await message.channel.send(help_text)
+
         
         if message.content == '!ping':
             await message.channel.send('Pong!')
+        
+        if message.content == '!getip':
+            ip_address = socket.gethostbyname(socket.gethostname())
+            await message.channel.send(f'IP Address: {ip_address}')
+        
+        if message.content == "!site":
+            ip_address = socket.gethostbyname(socket.gethostname())
+            await message.channel.send(f"http://{ip_address}:52800")
         
         elif message.content == '!shutdown':
             await message.channel.send('Shutting down...')
