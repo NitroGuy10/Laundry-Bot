@@ -5,10 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laundry</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+    <script defer>
+        let pinHistory = [];
+
+        async function fetchPinStatus()
+        {
+            try
+            {
+                const response = await fetch('/pin-status');
+                const data = await response.json();
+                pinHistory.push(data.status);
+                if (pinHistory.length > 40)
+                {
+                    pinHistory.shift();
+                }
+                document.getElementById('pin-status').innerText = data.status ? "HIGH" : "LOW";
+                document.getElementById('pin-status').style.color = data.status ? "green" : "red";
+                document.getElementById('last-updated').innerText = `Last Updated: ${new Date().toLocaleString()}`;
+                drawPinHistory();
+            }
+            catch (error)
+            {
+                document.getElementById('error').innerText = error.message;
+            }
+        }
+
+        function drawPinHistory()
+        {
+            const canvas = document.getElementById('canvas-pin-history');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const barWidth = canvas.width / pinHistory.length;
+            pinHistory.forEach((status, index) => {
+                ctx.fillStyle = status ? 'green' : 'red';
+                const barHeight = status ? canvas.height : canvas.height / 4;
+                ctx.fillRect(index * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+            });
+        }
+
+        // Poll every second
+        setInterval(fetchPinStatus, 1000);
+    </script>
 </head>
 <body>
     <h1>Laundry</h1>
-    <p hx-get="/status" hx-trigger="load"></p>
+    <canvas id="canvas-pin-history" width="400" height="100" style="border: 1px solid black;"></canvas>
+    <p><strong>Pin Status: <span id="pin-status">...</span></strong></p>
+    <p id="last-updated"></p>
+    <p style="color: red;" id="error"></p>
 </body>
 </html>

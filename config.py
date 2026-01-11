@@ -4,7 +4,9 @@ import os
 CONFIG_PATH = "config.json"
 config = {
     "discord_bot_token": "",
-    "port": "52800"
+    "port": "52800",
+    "silenced": "false",
+    "finished_timeout_seconds": "60"
 }
 
 def save_config() -> None:
