@@ -23,7 +23,7 @@ class MyClient(discord.Client):
             for guild in self.guilds:
                 for channel in guild.text_channels:
                     if channel.name == "laundry":
-                        await channel.send("Your laundry is done! 🧺✅")
+                        await channel.send("@everyone Your laundry is done! 🧺✅")
                         return
 
     async def on_message(self, message):
@@ -98,10 +98,11 @@ class MyClient(discord.Client):
 async def start_bot():
     intents = discord.Intents.default()
     intents.message_content = True
+    allowed_mentions = discord.AllowedMentions(everyone=True)
     print("Starting Discord bot...")
 
     global client
-    client = MyClient(intents=intents)
+    client = MyClient(intents=intents, allowed_mentions=allowed_mentions)
     token = config.get("discord_bot_token")
 
     await client.start(token)
